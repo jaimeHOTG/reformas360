@@ -195,6 +195,17 @@ p {
     font-size: 0.9rem;
 }
 
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--primary-dark);
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 101;
+}
+
 /* 1. HERO */
 .hero {
     position: relative;
@@ -850,7 +861,29 @@ p {
 }
 
 @media (max-width: 768px) {
-    .nav { display: none; } /* On mobile, we usually replace this with a hamburger menu, but kept hidden as per previous setup */
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .nav { 
+        display: none; 
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--white);
+        flex-direction: column;
+        padding: 1.5rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        gap: 1.5rem;
+        text-align: center;
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    .nav.active {
+        display: flex;
+    }
+
     .hero h1 { font-size: 2.4rem; }
     .projects-grid, .about-grid, .contact-grid {
         grid-template-columns: 1fr;

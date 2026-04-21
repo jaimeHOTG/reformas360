@@ -22,7 +22,16 @@
                 <span class="logo-bcn">BCN</span>
                 <span class="logo-reformas">REFORMAS <span class="logo-360">360</span></span>
             </div>
-            <nav class="nav">
+            <!-- Botón Hamburguesa (solo visible en móvil) -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <nav class="nav" id="mainNav">
                 <a href="#servicios">Servicios</a>
                 <a href="#proceso">Proceso</a>
                 <a href="#proyectos">Trabajos</a>
@@ -584,7 +593,7 @@
             align-items: center !important;
             justify-content: center !important;
             box-shadow: 0 6px 20px rgba(254, 116, 0, 0.4) !important;
-            z-index: 2147483646 !important; /* Justo debajo del chat abierto de Landbot, pero encima de su launcher invisible */
+            z-index: 9999 !important; /* Debajo del chat abierto (Popup) para que no moleste */
             cursor: pointer !important;
             transition: transform 0.3s ease, background-color 0.3s ease !important;
             text-decoration: none !important;
@@ -617,12 +626,10 @@
                 s.type = "module";
                 s.async = true;
                 s.addEventListener('load', function () {
-                    // Usamos la instancia global myLandbot quitando la palabra 'var'
-                    myLandbot = new Landbot.Livechat({
+                    // Usamos Landbot.Popup, el cual por definición NO TIENE launcher bubble. 
+                    // Es un modal invisible que solo aparece cuando se llama a myLandbot.open().
+                    myLandbot = new Landbot.Popup({
                         configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-3404034-7PLPR5GEH3AGDMEH/index.json',
-                        launcherOptions: {
-                            enable: false // Lo dejamos desactivado también por API por si acaso
-                        }
                     });
                 });
                 s.src = 'https://cdn.landbot.io/landbot-3/landbot-3.0.0.mjs';
@@ -655,18 +662,35 @@
             if (myLandbot) {
                 myLandbot.open();
             } else {
-                // Si todavía no se había cargado (el usuario no movió el ratón), lo forzamos
+                // Si todavía no se había cargado, lo forzamos
                 initLandbot();
                 
                 // Esperamos activamente a que se cree la instancia para abrir el chat
                 var checkInterval = setInterval(function() {
                     if (myLandbot) {
                         clearInterval(checkInterval);
-                        setTimeout(function(){ myLandbot.open(); }, 500); // Pequeño margen para renderizado del chat
+                        setTimeout(function(){ myLandbot.open(); }, 500); // Pequeño margen para renderizado
                     }
                 }, 300);
             }
         }
+
+        // Lógica del menú móvil (Hamburguesa)
+        document.addEventListener('DOMContentLoaded', function() {
+            var menuBtn = document.getElementById('mobileMenuBtn');
+            var nav = document.getElementById('mainNav');
+            var navLinks = nav.querySelectorAll('a');
+            
+            menuBtn.addEventListener('click', function() {
+                nav.classList.toggle('active');
+            });
+            
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    nav.classList.remove('active');
+                });
+            });
+        });
     </script>
     <!-- Botón Flotante Personalizado -->
     <a href="#" onclick="abrirChat(event)" class="custom-chat-btn" aria-label="Abrir asistente virtual">
