@@ -624,9 +624,9 @@
             var modal = document.getElementById('customLandbotModal');
             var iframe = document.getElementById('landbotIframe');
             
-            // Cargar el iframe solo la primera vez comprobando el atributo real o el data-src
-            if (iframe.getAttribute('src') === "" || iframe.getAttribute('src') === "about:blank") {
-                iframe.setAttribute('src', iframe.getAttribute('data-src'));
+            // Carga diferida segura: solo cargamos Landbot si no se ha cargado previamente
+            if (!iframe.src.includes('landbot.online')) {
+                iframe.src = 'https://landbot.online/v3/H-3404034-7PLPR5GEH3AGDMEH/index.html';
             }
             
             modal.classList.add('active');
@@ -673,7 +673,7 @@
             <span>Asistente BCN Reformas 360</span>
             <button onclick="cerrarChat(event)" aria-label="Cerrar chat">&times;</button>
         </div>
-        <iframe id="landbotIframe" src="about:blank" data-src="https://landbot.online/v3/H-3404034-7PLPR5GEH3AGDMEH/index.html" frameborder="0" allow="microphone; camera"></iframe>
+        <iframe id="landbotIframe" src="about:blank" frameborder="0" allow="microphone; camera"></iframe>
     </div>
 </body>
 
