@@ -552,8 +552,23 @@
             --landbot-color-primary: #fe7400 !important; 
         }
 
-        /* La ocultación del botón nativo de Landbot ahora se maneja vía API de configuración (launcherOptions: enable: false),
-           por lo que ya no necesitamos forzar la ocultación con CSS. */
+        /* DESTRUCCIÓN TOTAL DEL LAUNCHER NATIVO DE LANDBOT */
+        /* Apuntamos a todos los posibles nombres que usa Landbot en desktop y móvil (etiquetas custom e iframes) */
+        landbot-launcher, 
+        .LivechatLauncher, 
+        #landbot-launcher, 
+        iframe[name="landbot-launcher"] {
+            display: none !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            z-index: -2147483648 !important; /* El valor negativo más bajo posible */
+            position: absolute !important;
+            left: -9999px !important;
+            top: -9999px !important;
+        }
 
         /* Botón flotante personalizado 100% controlable y clicable en toda su área */
         .custom-chat-btn {
@@ -606,7 +621,7 @@
                     myLandbot = new Landbot.Livechat({
                         configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-3404034-7PLPR5GEH3AGDMEH/index.json',
                         launcherOptions: {
-                            enable: false // Esto evita completamente que Landbot renderice su burbuja nativa
+                            enable: false // Lo dejamos desactivado también por API por si acaso
                         }
                     });
                 });
@@ -616,7 +631,19 @@
             }
         }
 
-        // El MutationObserver ya no es necesario porque desactivamos el launcher desde la API de Landbot.
+        // Vigilante nuclear: Escanea el DOM constantemente y si Landbot inyecta el launcher nativo (ya sea div, custom element o iframe), lo fulmina.
+        var landbotObserver = new MutationObserver(function() {
+            var nativeLaunchers = document.querySelectorAll('landbot-launcher, .LivechatLauncher, iframe[name="landbot-launcher"]');
+            nativeLaunchers.forEach(function(launcher) {
+                // Inyectamos CSS en línea para forzar su desaparición por encima de cualquier otro estilo
+                launcher.style.cssText = 'display: none !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; z-index: -2147483648 !important; position: absolute !important; left: -9999px !important; top: -9999px !important;';
+                if(launcher.tagName.toLowerCase() === 'iframe') {
+                    launcher.setAttribute('tabindex', '-1');
+                }
+            });
+        });
+        landbotObserver.observe(document.body, { childList: true, subtree: true });
+
         // Carga diferida inicial
         window.addEventListener('mouseover', initLandbot, { once: true });
         window.addEventListener('touchstart', initLandbot, { once: true });
