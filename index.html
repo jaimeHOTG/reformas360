@@ -552,16 +552,8 @@
             --landbot-color-primary: #fe7400 !important; 
         }
 
-        /* Ocultar definitivamente el botón nativo de Landbot mediante CSS */
-        landbot-launcher, .LivechatLauncher, #landbot-launcher {
-            display: none !important;
-            pointer-events: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            width: 0 !important;
-            height: 0 !important;
-            z-index: -9999 !important;
-        }
+        /* La ocultación del botón nativo de Landbot ahora se maneja vía API de configuración (launcherOptions: enable: false),
+           por lo que ya no necesitamos forzar la ocultación con CSS. */
 
         /* Botón flotante personalizado 100% controlable y clicable en toda su área */
         .custom-chat-btn {
@@ -613,6 +605,9 @@
                     // Usamos la instancia global myLandbot quitando la palabra 'var'
                     myLandbot = new Landbot.Livechat({
                         configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-3404034-7PLPR5GEH3AGDMEH/index.json',
+                        launcherOptions: {
+                            enable: false // Esto evita completamente que Landbot renderice su burbuja nativa
+                        }
                     });
                 });
                 s.src = 'https://cdn.landbot.io/landbot-3/landbot-3.0.0.mjs';
@@ -621,16 +616,7 @@
             }
         }
 
-        // Observer blindado: vigila el DOM para anular el botón nativo de Landbot (y su área invisible)
-        // para que no interfiera NUNCA con nuestro botón personalizado.
-        var landbotObserver = new MutationObserver(function() {
-            var nativeLauncher = document.querySelector('landbot-launcher');
-            if (nativeLauncher) {
-                nativeLauncher.style.cssText = 'display: none !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; z-index: -9999 !important; position: absolute !important; left: -9999px !important;';
-            }
-        });
-        landbotObserver.observe(document.body, { childList: true, subtree: true });
-
+        // El MutationObserver ya no es necesario porque desactivamos el launcher desde la API de Landbot.
         // Carga diferida inicial
         window.addEventListener('mouseover', initLandbot, { once: true });
         window.addEventListener('touchstart', initLandbot, { once: true });
