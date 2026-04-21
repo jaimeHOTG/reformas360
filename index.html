@@ -617,62 +617,26 @@
         }
     </style>
     <script>
-        var myLandbot;
-        
-        function initLandbot() {
-            if (!myLandbot && !window.landbotLoading) {
-                window.landbotLoading = true;
-                var s = document.createElement('script');
-                s.type = "module";
-                s.async = true;
-                s.addEventListener('load', function () {
-                    // Usamos Landbot.Popup, el cual por definición NO TIENE launcher bubble. 
-                    // Es un modal invisible que solo aparece cuando se llama a myLandbot.open().
-                    myLandbot = new Landbot.Popup({
-                        configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-3404034-7PLPR5GEH3AGDMEH/index.json',
-                    });
-                });
-                s.src = 'https://cdn.landbot.io/landbot-3/landbot-3.0.0.mjs';
-                var x = document.getElementsByTagName('script')[0];
-                x.parentNode.insertBefore(s, x);
-            }
-        }
-
-        // Vigilante nuclear: Escanea el DOM constantemente y si Landbot inyecta el launcher nativo (ya sea div, custom element o iframe), lo fulmina.
-        var landbotObserver = new MutationObserver(function() {
-            var nativeLaunchers = document.querySelectorAll('landbot-launcher, .LivechatLauncher, iframe[name="landbot-launcher"]');
-            nativeLaunchers.forEach(function(launcher) {
-                // Inyectamos CSS en línea para forzar su desaparición por encima de cualquier otro estilo
-                launcher.style.cssText = 'display: none !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; z-index: -2147483648 !important; position: absolute !important; left: -9999px !important; top: -9999px !important;';
-                if(launcher.tagName.toLowerCase() === 'iframe') {
-                    launcher.setAttribute('tabindex', '-1');
-                }
-            });
-        });
-        landbotObserver.observe(document.body, { childList: true, subtree: true });
-
-        // Carga diferida inicial
-        window.addEventListener('mouseover', initLandbot, { once: true });
-        window.addEventListener('touchstart', initLandbot, { once: true });
-
-        // Función global para abrir el chat de Landbot
+        // Controlador del Modal Custom de Landbot
         function abrirChat(e) {
             if (e) e.preventDefault();
             
-            if (myLandbot) {
-                myLandbot.open();
-            } else {
-                // Si todavía no se había cargado, lo forzamos
-                initLandbot();
-                
-                // Esperamos activamente a que se cree la instancia para abrir el chat
-                var checkInterval = setInterval(function() {
-                    if (myLandbot) {
-                        clearInterval(checkInterval);
-                        setTimeout(function(){ myLandbot.open(); }, 500); // Pequeño margen para renderizado
-                    }
-                }, 300);
+            var modal = document.getElementById('customLandbotModal');
+            var iframe = document.getElementById('landbotIframe');
+            
+            // Cargar el iframe solo la primera vez que se hace clic para mantener rendimiento (Lazy Load)
+            if (!iframe.src) {
+                iframe.src = "https://landbot.online/v3/H-3404034-7PLPR5GEH3AGDMEH/index.html";
             }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Evitar scroll de fondo en móvil
+        }
+
+        function cerrarChat(e) {
+            if (e) e.preventDefault();
+            document.getElementById('customLandbotModal').classList.remove('active');
+            document.body.style.overflow = ''; // Restaurar scroll
         }
 
         // Lógica del menú móvil (Hamburguesa)
@@ -702,6 +666,15 @@
             <circle cx="16" cy="11.5" r="1.5" fill="currentColor" stroke="none"></circle>
         </svg>
     </a>
+
+    <!-- Modal Custom Iframe para Landbot (Aísla totalmente a Landbot del DOM principal) -->
+    <div id="customLandbotModal" class="custom-landbot-modal">
+        <div class="chat-header">
+            <span>Asistente BCN Reformas 360</span>
+            <button onclick="cerrarChat(event)" aria-label="Cerrar chat">&times;</button>
+        </div>
+        <iframe id="landbotIframe" src="" frameborder="0" allow="microphone; camera"></iframe>
+    </div>
 </body>
 
 </html>
