@@ -913,51 +913,166 @@ p {
     .hero-ctas { flex-direction: column; }
 }
 
-/* 11. CUSTOM LANDBOT MODAL (Aislamiento Total) */
-.custom-landbot-modal {
+/* 11. ASISTENTE VIRTUAL PROPIO */
+.custom-chat-btn {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    width: 70px !important;
+    height: 70px !important;
+    background-color: var(--primary-orange) !important;
+    color: #ffffff !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 6px 20px rgba(254, 116, 0, 0.4) !important;
+    z-index: 9999 !important;
+    cursor: pointer !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    text-decoration: none !important;
+    pointer-events: auto !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-chat-btn:hover,
+.custom-chat-btn:active {
+    transform: scale(1.08) translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(254, 116, 0, 0.5) !important;
+}
+
+.custom-chat-modal {
     display: none;
     position: fixed;
     bottom: 110px;
     right: 30px;
-    width: 380px;
-    height: 600px;
+    width: 390px;
+    height: 620px;
     max-height: calc(100vh - 140px);
     background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.22);
     z-index: 2147483647;
     overflow: hidden;
     flex-direction: column;
     animation: slideUp 0.3s ease;
 }
 
-.custom-landbot-modal.active {
+.custom-chat-modal.active {
     display: flex;
 }
 
-.custom-landbot-modal .chat-header {
+.custom-chat-modal .chat-header {
     background: var(--primary-orange);
     color: var(--white);
-    padding: 12px 16px;
+    padding: 14px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-weight: 600;
+    font-weight: 700;
 }
 
-.custom-landbot-modal .chat-header button {
+.custom-chat-modal .chat-header button {
     background: none;
     border: none;
     color: var(--white);
-    font-size: 28px;
+    font-size: 30px;
     cursor: pointer;
     line-height: 1;
 }
 
-.custom-landbot-modal iframe {
-    flex-grow: 1;
+.chat-body {
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+    background: #f6f8fb;
+}
+
+.chat-message {
+    max-width: 86%;
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    line-height: 1.45;
+    white-space: pre-line;
+    font-size: 0.95rem;
+}
+
+.chat-message.bot {
+    background: #ffffff;
+    color: var(--text-dark);
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.chat-message.user {
+    background: var(--primary-orange);
+    color: #ffffff;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-actions {
+    padding: 14px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    display: grid;
+    gap: 8px;
+}
+
+.chat-option {
     width: 100%;
     border: none;
+    border-radius: 10px;
+    background: var(--primary-orange);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.chat-option:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+.chat-option.secondary {
+    background: #374151;
+    text-align: center;
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input-row input {
+    flex: 1;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.chat-input-row input:focus {
+    border-color: var(--primary-orange);
+}
+
+.chat-input-row input.error {
+    border-color: #dc2626;
+}
+
+.chat-input-row button {
+    border: none;
+    border-radius: 10px;
+    background: var(--primary-orange);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0 16px;
+    cursor: pointer;
 }
 
 @keyframes slideUp {
@@ -966,13 +1081,19 @@ p {
 }
 
 @media (max-width: 768px) {
-    .custom-landbot-modal {
+    .custom-chat-btn {
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    .custom-chat-modal {
         bottom: 0;
         right: 0;
         width: 100%;
         height: 100%;
         max-height: 100vh;
         border-radius: 0;
-        z-index: 2147483647; /* Asegurar que cubra todo en móvil */
     }
 }
