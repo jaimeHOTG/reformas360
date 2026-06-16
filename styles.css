@@ -1047,6 +1047,8 @@ p {
     border-radius: 10px;
     background: var(--primary-orange);
     color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.35;
     font-weight: 700;
     padding: 12px 14px;
     cursor: pointer;
@@ -1108,6 +1110,13 @@ p {
 }
 
 @media (max-width: 768px) {
+    .chat-option {
+        font-size: 16px;
+        line-height: 1.35;
+        padding: 13px 14px;
+        min-height: 46px;
+    }
+
     .custom-chat-btn {
         bottom: 20px !important;
         right: 20px !important;
